@@ -1,0 +1,13 @@
+nose
+sure
+mock
+unclebob
+supervisor
+redis
+gevent
+gevent-websocket
+gevent-socketio
+south
+celery
+django-celery
+Django
