@@ -1,0 +1,9 @@
+git
+postgres
+gist
+nginx
+uwsgi
+geoip
+wget
+redis
+sl
