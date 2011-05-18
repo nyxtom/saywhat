@@ -1,0 +1,143 @@
+#!/bin/sh
+
+red="\033[1;31m"
+green="\033[1;32m"
+yellow="\033[1;33m"
+white="\033[1;37m"
+nc="\033[0m"
+
+export LANG=C # ensuring english once we expect the word "LISTEN" on grep
+
+unset -f runserver
+unset -f stop_supervisor
+unset -f start_supervisor
+unset -f dtest
+unset -f default_tests
+unset -f migrate
+unset -f syncdb
+unset -f rat
+unset -f rat
+unset -f askthor
+
+PSQL_BIN=`which psql`
+
+askthor () {
+    # Simply prints out the list of available commands used with the project
+    echo
+    print_cmd syncdb "Uses django syncdb to a specific db, drop, create and sync with migration fake steps"
+    print_cmd migrate "Uses django migrate without initial data"
+    print_cmd profilet "Runs the django test runner with the -cProfile python extension"
+    print_cmd default_tests "Finds all tests under your apps/ directory"
+    print_cmd dtest "Runs the django test runner"
+    print_cmd atest "Runs lettuce harvest after creating an acceptance database"
+    print_cmd stop_supervisor "Stops the supervisord in your scripts folder"
+    print_cmd start_supervisor "Starts the supervisord in your scripts folder"
+    print_cmd runserver "Uses the django runserver command after starting up the supervisor service"
+    echo
+}
+print_cmd() {
+    printf "$yellow$1$white: $2 $nc"
+    echo
+}
+
+syncdb () {
+    # sync a specific database, doing the drop, create, and sync steps
+    db=$1
+    if [[ -z $db ]]; then
+        db=thor
+    fi
+    dropdb $db
+    createdb $db && ./manage.py syncdb --all --noinput && ./manage.py migrate --fake
+}
+
+migrate () {
+    # migrate without initial data
+    ./manage.py migrate --no-initial-data "$@"
+}
+
+profilet () {
+    # run the tests using the standard Django testrunner
+    TESTS="$@"
+    if [[ -z $TESTS ]]; then
+        TESTS=`default_tests`
+    fi
+    clearpyc
+    python -m cProfile -o test.prof manage.py test $TESTS
+}
+
+default_tests () {
+    # list all the default tests that should be run
+    # unclebob requires the format apps/appname/tests
+    for name in `find apps -maxdepth 1 -type d -not -name apps`; do
+        echo "$name/tests"
+    done;
+}
+
+dtest () {
+    TESTS="$A"
+    if [[ -z $TESTS ]]; then
+        TESTS=`default_tests`
+    fi
+    clearpyc
+    ./manage.py test $TESTS
+}
+
+stop_supervisor () {
+    if [[ ! -f manage.py ]]; then
+        echo "You must run this command from the root project folder"
+        return 1
+    fi
+    printf "Will now stop supervisor... "
+    for conffile in ../scripts/supervisord.conf; do
+        while [ -z "$?" ]; do
+            silent supervisorctl -c $conffile shutdown
+        done
+    done
+    simplekill 'supervisor(d|ctl)'
+    simplekill celeryd
+    simplekill nginx
+    simplekill redis
+    simplekill socketioserver
+    echo "OK"
+}
+
+start_supervisor () {
+    if [[ ! -f manage.py ]]; then
+        echo "You must run this command from the root project folder"
+        return 1
+    fi
+    stop_supervisor
+    printf "Starting supervisor... "
+    mkdir -p ../scripts/logs
+    silent supervisord -c ../scripts/supervisord.conf
+    echo "OK"
+}
+
+runserver () {
+    start_supervisor;
+    python manage.py runserver 7000 $@ --settings=settings
+    stop_all_supervisors
+}
+
+atest () {
+    # runs acceptance tests using lettuce
+    DBNAME=thor_acceptance
+    $PSQL_BIN --list | egrep $DBNAME 2>&1 > /dev/null
+    has_db=$?
+
+    if [ "$has_db" = "1" ]; then
+        echo "it seems you don't have the database \"$DBNAME\" yet"
+    fi;
+
+    if [ "$1" != "--fast" ] || [ "$has_db" = "1" ]; then
+        printf "preparing the acceptance database... "
+        silent syncdb $DBNAME
+        echo "ok"
+    fi;
+
+    # Run the acceptance tests with lettuce harvest
+    start_supervisor
+    args=`echo $@ | 's,--fast,,g'`;
+    python manage.py harvest $args
+    stop_supervisor
+}
