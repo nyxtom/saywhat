@@ -6,4 +6,3 @@ uwsgi
 geoip
 wget
 redis
-sl
