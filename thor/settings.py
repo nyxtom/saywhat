@@ -59,7 +59,11 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'utils',
 )
+
+# Session backend to redis
+SESSION_ENGINE = 'utils.sessions.backends.redis'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
