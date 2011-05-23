@@ -1,6 +1,7 @@
 nose
 sure
 mock
+lettuce
 unclebob
 supervisor
 redis
