@@ -11,3 +11,4 @@ south
 celery
 django-celery
 Django
+mongoengine
