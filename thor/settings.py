@@ -14,7 +14,7 @@ USE_L10N = True
 
 # Media/static file related paths + urls
 PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__))
-STATIC_ROOT = os.path.join(PROJECT_PATH, 'static')
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 STATIC_URL = '/static/'
 MEDIA_ROOT = STATIC_ROOT
 MEDIA_URL = STATIC_URL
@@ -45,12 +45,12 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
-    os.path.join(PROJECT_PATH, 'templates'),
+    os.path.join(PROJECT_ROOT, 'templates'),
 )
 
 # Add the apps directory to the first position of the PYTHON_PATH, but keeping our dir in the top too
-sys.path.insert(0, os.path.join(PROJECT_PATH, ''))
-sys.path.insert(1, os.path.join(PROJECT_PATH, 'apps'))
+sys.path.insert(0, os.path.join(PROJECT_ROOT, ''))
+sys.path.insert(1, os.path.join(PROJECT_ROOT, 'apps'))
 
 INSTALLED_APPS = (
     'django.contrib.auth',
