@@ -11,11 +11,9 @@ class SessionStore(SessionBase):
     """
     def __init__(self, session_key=None):
         self.redis = redis.Redis(
-            host=getattr(settings, "REDIS_HOST", None),
-            port=getattr(settings, "REDIS_PORT", None),
-            timeout=getattr(settings, "REDIS_TIMEOUT", None),
-            db=getattr(settings, "REDIS_DB", None))
-        self.redis.connect()
+            host=getattr(settings, "REDIS_HOST", 'localhost'),
+            port=getattr(settings, "REDIS_PORT", 6379),
+            db=getattr(settings, "REDIS_DB", 'default'))
         super(SessionStore, self).__init__(session_key)
 
     def load(self):

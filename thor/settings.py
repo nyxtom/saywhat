@@ -63,7 +63,7 @@ INSTALLED_APPS = (
 )
 
 # Session backend to redis
-SESSION_ENGINE = 'utils.sessions.backends.redis'
+SESSION_ENGINE = 'utils.sessions.backends.redis_backend'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
