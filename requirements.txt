@@ -3,12 +3,13 @@ sure
 mock
 lettuce
 unclebob
-supervisor
 redis
-gevent
-gevent-websocket
-gevent-socketio
 south
 celery
 django-celery
 Django
+supervisor
+django-debug-toolbar
+gevent
+gevent-websocket
+gevent-socketio

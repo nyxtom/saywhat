@@ -3,7 +3,7 @@
 ; ===============================
 
 [program:socketio]
-command=python %(here)s/../thor/socketioserver.py
+command=pypy %(here)s/../socketioserver.py
 numprocs=1
 redirect_stderr=true
 stdout_logfile=%(here)s/logs/socketio.log

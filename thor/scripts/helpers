@@ -33,6 +33,7 @@ askthor () {
     print_cmd stop_supervisor "Stops the supervisord in your scripts folder"
     print_cmd start_supervisor "Starts the supervisord in your scripts folder"
     print_cmd runthor "Uses the django runserver command after starting up the supervisor service"
+    print_cmd checkports "Checks to see if all the ports are available for running the site"
     echo
 }
 print_cmd() {
@@ -62,7 +63,7 @@ profilet () {
         TESTS=`default_tests`
     fi
     clearpyc
-    python -m cProfile -o test.prof manage.py test $TESTS
+    pypy -m cProfile -o test.prof manage.py test $TESTS
 }
 
 default_tests () {
@@ -88,7 +89,7 @@ stop_supervisor () {
         return 1
     fi
     printf "Will now stop supervisor... "
-    for conffile in ../scripts/supervisord.conf; do
+    for conffile in scripts/supervisord.conf; do
         while [ -z "$?" ]; do
             silent supervisorctl -c $conffile shutdown
         done
@@ -108,15 +109,16 @@ start_supervisor () {
     fi
     stop_supervisor
     printf "Starting supervisor... "
-    mkdir -p ../scripts/logs
-    silent supervisord -c ../scripts/supervisord.conf
+    mkdir -p scripts/logs
+    silent supervisord -c scripts/supervisord.conf
     echo "OK"
 }
 
 runthor () {
     clearpyc
     start_supervisor;
-    python manage.py runserver 7000 $@ --settings=settings
+    silent ./socketioserver.py & 
+    ./manage.py runserver 7000 $@ --settings=settings
     stop_supervisor
     clearpyc
 }
@@ -140,6 +142,33 @@ atest () {
     # Run the acceptance tests with lettuce harvest
     start_supervisor
     args=`echo $@ | 's,--fast,,g'`;
-    python manage.py harvest $args
+    ./manage.py harvest $args
     stop_supervisor
+}
+
+check_port () {
+    printf "$yellow[PORT $1] -> $white$2 ...$nc"
+    killarg=`echo $@ | egrep '[-]{2}kill'`
+    has_permission_to_kill=$?
+
+    if [ -z has_permission_to_kill ]; then
+        (netstat -na | egrep "[:.]$1.*LISTEN" 2>&1 > /dev/null) 2>&1 || printf "$green OK$nc\n"
+        pid=`sudo lsof -i :$1 | awk '{ print $2 }' | grep -vi PID`
+        if [ ! -z "$pid" ]; then
+            (sudo kill -9 $pid 2>&1 > /dev/null) 2>&1 > /dev/null && printf "$yellow KILLED$nc\n" || printf "$red impossible. $white Maybe it's been already killed somehow\n$nc\n"
+        fi;
+    else
+        (netstat -na | egrep "[:.]$1.*LISTEN" 2>&1 > /dev/null) 2>&1 && printf "$red BUSY\n$nc\n" && exit 1 || printf "$green OK$nc\n"
+    fi;
+}
+
+checkports() {
+    echo
+    check_port 9999 "for supervisord control panel"
+    check_port 9000 "for socketio (public facing) port"
+    check_port 8000 "for frontend's nginx"
+    check_port 7000 "for django server"
+    check_port 6379 "for redis"
+    check_port 7777 "for socketio server"
+    echo
 }
