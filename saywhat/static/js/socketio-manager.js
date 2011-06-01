@@ -13,26 +13,24 @@ var LiveManager = {
 
     connect: function(host, port) {
         /// Connects to the socketio server for the given host/port
-        var $this = this;
-        $this.server = new io.Socket(host, {'port': port});
-        $this.server.apply_events();
-        $this.server.connect();
+        this.server = new io.Socket(host, {'port': port});
+        this.server.apply_events();
+        this.server.connect();
     },
 
     apply_events: function() {
         /// Applies all default socket io server event listeners
-        var $this = this;
-        $this.on('message', $this.on_message);
-        $this.on('connect', $this.on_connect);
-        $this.on('reconnecting', $this.on_reconnecting);
+        this.on('message', this.on_message);
+        this.on('connect', this.on_connect);
+        this.on('reconnecting', this.on_reconnecting);
     },
 
     on_message: function(data) {
         /// Occurs when the message data is triggered and sent from socket.io
         if (obj.message.type == 'message') {
-            var data = $this._parse_message(obj.message.data);
+            var data = this._parse_message(obj.message.data);
             if (data) {
-                $this._log('Message on ', obj.message.channel, ': ', data);
+                this._log('Message on ', obj.message.channel, ': ', data);
                 var handlers = $this.topics[obj.message.channel];
                 if (handlers) {
                     $.each(handlers, function(i, cb) { cb(data.data) });
@@ -43,9 +41,7 @@ var LiveManager = {
 
     on_connect: function() {
         /// Occurs when the socket.io connection is ready 100%
-        var $this = this;
-
-        $this._log('Connected to Socket.io');
+        this._log('Connected to Socket.io');
         if (!$(".connection_status").hasClass("online")) {
             $(".connection_status").addClass("online");
         }
@@ -53,9 +49,8 @@ var LiveManager = {
 
     on_reconnecting: function(delay, attempts) {
         /// Occurs when the socket.io connection is attempting to reconnect
-        var $this = this;
         if (attempts > 1) {
-            $this.retry_connection(delay);
+            this.retry_connection(delay);
             if (!$(".connection_status").hasClass("online")) {
                 $(".connection_status").removeClass("online");
             }
