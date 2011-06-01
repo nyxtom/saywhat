@@ -21,6 +21,18 @@ unset -f askthor
 
 PSQL_BIN=`which psql`
 
+silent () {
+    ($@ 2>&1 > /dev/null) 2>&1 > /dev/null
+}
+
+shelter () {
+    mkvirtualenv --no-site-packages $@
+}
+
+simplekill () {
+    silent kill -9 `ps aux | egrep -i $1 | egrep -v "(grep)" | awk '{ print $2 }'`
+}
+
 askthor () {
     # Simply prints out the list of available commands used with the project
     echo
