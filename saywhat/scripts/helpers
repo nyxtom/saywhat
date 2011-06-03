@@ -8,7 +8,7 @@ nc="\033[0m"
 
 export LANG=C # ensuring english once we expect the word "LISTEN" on grep
 
-unset -f runthor
+unset -f runme
 unset -f stop_supervisor
 unset -f start_supervisor
 unset -f dtest
@@ -17,7 +17,7 @@ unset -f migrate
 unset -f syncdb
 unset -f rat
 unset -f rat
-unset -f askthor
+unset -f askme
 
 PSQL_BIN=`which psql`
 
@@ -33,7 +33,7 @@ simplekill () {
     silent kill -9 `ps aux | egrep -i $1 | egrep -v "(grep)" | awk '{ print $2 }'`
 }
 
-askthor () {
+askme () {
     # Simply prints out the list of available commands used with the project
     echo
     print_cmd syncdb "Uses django syncdb to a specific db, drop, create and sync with migration fake steps"
@@ -44,7 +44,7 @@ askthor () {
     print_cmd atest "Runs lettuce harvest after creating an acceptance database"
     print_cmd stop_supervisor "Stops the supervisord in your scripts folder"
     print_cmd start_supervisor "Starts the supervisord in your scripts folder"
-    print_cmd runthor "Uses the django runserver command after starting up the supervisor service"
+    print_cmd runme "Uses the django runserver command after starting up the supervisor service"
     print_cmd checkports "Checks to see if all the ports are available for running the site"
     echo
 }
@@ -126,7 +126,7 @@ start_supervisor () {
     echo "OK"
 }
 
-runthor () {
+runme () {
     clearpyc
     start_supervisor;
     silent ./socketioserver.py & 

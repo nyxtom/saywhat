@@ -1,0 +1,53 @@
+@footer-border: #111;
+@footer-bg: #333;
+@footer-bg-highlight: #444;
+@footer-shadow: #333;
+@footer-shadow-highlight: #444;
+
+.opacity (@opacity: 100) {
+    filter: alpha(opacity=@opacity);
+    -khtml-opacity: @opacity / 100;
+    -moz-opacity: @opacity / 100;
+    opacity: @opacity / 100;
+}
+.shadowed (@hlen: 0px, @vlen: 0px, @blur: 10px, @color: #333) {
+    box-shadow: @hlen @vlen @blur @color;
+    -moz-box-shadow: @hlen @vlen @blur @color;
+    -webkit-box-shadow: @hlen @vlen @blur @color;
+}
+.transition (@prop: all, @time: 0.4s, @method: ease-in-out) {
+  -webkit-transition: @prop @time @method;
+  -moz-transition: @prop @time @method;
+  -o-transition: @prop @time @method;
+}
+
+.rounded-corners (@radius: 5px) {
+    border-radius: @radius;
+    -webkit-border-radius: @radius;
+    -moz-border-radius: @radius;
+}
+
+body { 
+    background: #262626;
+    text-height: 1em; 
+    font-family: Monaco; 
+    font-size: 12pt; 
+}
+
+#container { 
+    margin: 20px;
+}
+
+#footer {
+    height: 35px;
+    width: 100%;
+    position: fixed;
+    bottom: 0px;
+    background: @footer-bg;
+    .transition;
+    cursor: pointer;
+}
+#footer:hover {
+    height: 40px;
+    background: @footer-bg-highlight;
+}

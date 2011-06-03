@@ -49,7 +49,7 @@ TEMPLATE_DIRS = (
 )
 
 # Add the apps directory to the first position of the PYTHON_PATH, but keeping our dir in the top too
-sys.path.insert(0, os.path.join(PROJECT_ROOT, ''))
+sys.path.insert(0, os.path.join(PROJECT_ROOT, '../'))
 sys.path.insert(1, os.path.join(PROJECT_ROOT, 'apps'))
 
 INSTALLED_APPS = (
@@ -62,6 +62,8 @@ INSTALLED_APPS = (
     'utils',
     'djcelery',
     'south',
+    'live',
+    'main',
 )
 
 # Celery/Redis configuration settings

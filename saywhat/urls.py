@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import patterns, include, url
-from apps.live import urls as live_urls
+from live.urls import urlpatterns as live_urls
+from main.urls import urlpatterns as main_urls
 
-urlpatterns = patterns('',
-)
-
+urlpatterns = patterns('',)
+urlpatterns += main_urls
 urlpatterns += live_urls
