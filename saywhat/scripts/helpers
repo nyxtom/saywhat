@@ -8,18 +8,25 @@ nc="\033[0m"
 
 export LANG=C # ensuring english once we expect the word "LISTEN" on grep
 
-unset -f runme
+unset -f runthor
 unset -f stop_supervisor
 unset -f start_supervisor
 unset -f dtest
+unset -f atest
+unset -f profileit
 unset -f default_tests
-unset -f migrate
 unset -f syncdb
-unset -f rat
-unset -f rat
-unset -f askme
+unset -f askthor
+unset -f silent
+unset -f clearpyc
+unset -f shelter
+unset -f simplekill
 
 PSQL_BIN=`which psql`
+
+clearpyc () {
+    find . -iname '*.pyc' -delete
+}
 
 silent () {
     ($@ 2>&1 > /dev/null) 2>&1 > /dev/null
@@ -33,18 +40,18 @@ simplekill () {
     silent kill -9 `ps aux | egrep -i $1 | egrep -v "(grep)" | awk '{ print $2 }'`
 }
 
-askme () {
+askthor () {
     # Simply prints out the list of available commands used with the project
     echo
+    print_cmd clearpyc "Finds and deletes and *.pyc files in the project"
     print_cmd syncdb "Uses django syncdb to a specific db, drop, create and sync with migration fake steps"
-    print_cmd migrate "Uses django migrate without initial data"
-    print_cmd profilet "Runs the django test runner with the -cProfile python extension"
+    print_cmd profileit "Runs the django test runner with the -cProfile python extension"
     print_cmd default_tests "Finds all tests under your apps/ directory"
     print_cmd dtest "Runs the django test runner"
     print_cmd atest "Runs lettuce harvest after creating an acceptance database"
     print_cmd stop_supervisor "Stops the supervisord in your scripts folder"
     print_cmd start_supervisor "Starts the supervisord in your scripts folder"
-    print_cmd runme "Uses the django runserver command after starting up the supervisor service"
+    print_cmd runthor "Uses the django runserver command after starting up the supervisor service"
     print_cmd checkports "Checks to see if all the ports are available for running the site"
     echo
 }
@@ -60,22 +67,17 @@ syncdb () {
         db=thor
     fi
     dropdb $db
-    createdb $db && ./manage.py syncdb --all --noinput && ./manage.py migrate --fake
+    createdb $db && ./manage.py syncdb --all --noinput
 }
 
-migrate () {
-    # migrate without initial data
-    ./manage.py migrate --no-initial-data "$@"
-}
-
-profilet () {
+profileit () {
     # run the tests using the standard Django testrunner
     TESTS="$@"
     if [[ -z $TESTS ]]; then
         TESTS=`default_tests`
     fi
     clearpyc
-    pypy -m cProfile -o test.prof manage.py test $TESTS
+    python -m cProfile -o test.prof manage.py test $TESTS
 }
 
 default_tests () {
@@ -107,7 +109,6 @@ stop_supervisor () {
         done
     done
     simplekill 'supervisor(d|ctl)'
-    simplekill celeryd
     simplekill nginx
     simplekill redis
     simplekill socketioserver
@@ -126,7 +127,7 @@ start_supervisor () {
     echo "OK"
 }
 
-runme () {
+runthor () {
     clearpyc
     start_supervisor;
     silent ./socketioserver.py & 
