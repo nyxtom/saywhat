@@ -1,53 +1,127 @@
-@footer-border: #111;
-@footer-bg: #333;
-@footer-bg-highlight: #444;
-@footer-shadow: #333;
-@footer-shadow-highlight: #444;
+@light-blue:   hsl(190, 50%, 65%);
+@light-yellow: desaturate(#fefec8, 10%);
+@dark-yellow:  desaturate(darken(@light-yellow, 10%), 40%);
+@darkest:      hsl(20, 0%, 15%);
+@dark:         hsl(190, 20%, 30%);
+@medium:       hsl(10, 60%, 30%);
+@light:        hsl(90, 40%, 20%);
+@lightest:     hsl(90, 20%, 90%);
+@highlight:    hsl(80, 50%, 90%);
+@blue:         hsl(210, 60%, 20%);
+@alpha-blue:   hsla(210, 60%, 40%, 0.5);
 
-.opacity (@opacity: 100) {
-    filter: alpha(opacity=@opacity);
-    -khtml-opacity: @opacity / 100;
-    -moz-opacity: @opacity / 100;
-    opacity: @opacity / 100;
+.box-shadow (@x, @y, @blur, @alpha) {
+  @value: @x @y @blur rgba(0, 0, 0, @alpha);
+  box-shadow:         @value;
+  -moz-box-shadow:    @value;
+  -webkit-box-shadow: @value;
 }
-.shadowed (@hlen: 0px, @vlen: 0px, @blur: 10px, @color: #333) {
-    box-shadow: @hlen @vlen @blur @color;
-    -moz-box-shadow: @hlen @vlen @blur @color;
-    -webkit-box-shadow: @hlen @vlen @blur @color;
-}
-.transition (@prop: all, @time: 0.4s, @method: ease-in-out) {
-  -webkit-transition: @prop @time @method;
-  -moz-transition: @prop @time @method;
-  -o-transition: @prop @time @method;
-}
-
-.rounded-corners (@radius: 5px) {
-    border-radius: @radius;
-    -webkit-border-radius: @radius;
-    -moz-border-radius: @radius;
+.border-radius (@radius) {
+  border-radius: @radius;
+  -moz-border-radius: @radius;
+  -webkit-border-radius: @radius;
 }
 
-body { 
-    background: #262626;
-    text-height: 1em; 
-    font-family: Monaco; 
-    font-size: 12pt; 
+.border-radius (@radius, bottom) {
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  -moz-border-top-right-radius: 0;
+  -moz-border-top-left-radius: 0;
+  -webkit-border-top-left-radius: 0;
+  -webkit-border-top-right-radius: 0;
+}
+.border-radius (@radius, right) {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  -moz-border-bottom-left-radius: 0;
+  -moz-border-top-left-radius: 0;
+  -webkit-border-bottom-left-radius: 0;
+  -webkit-border-top-left-radius: 0;
+}
+.box-shadow-inset (@x, @y, @blur, @color) {
+  box-shadow: @x @y @blur @color inset;
+  -moz-box-shadow: @x @y @blur @color inset;
+  -webkit-box-shadow: @x @y @blur @color inset;
+}
+.code () {
+  font-family: 'Bitstream Vera Sans Mono',
+               'DejaVu Sans Mono',
+               'Monaco',
+               Courier,
+               monospace !important;
+}
+.wrap () {
+  text-wrap: wrap;
+  white-space: pre-wrap;       /* css-3 */
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 
-#container { 
-    margin: 20px;
+html { margin: 0 }
+body {
+  background-color: @darkest;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  font-size: 100%;
+  overflow-x: hidden;
+}
+nav, header, footer, section, article {
+    display: block;
+}
+hr {
+  margin: 0px;
+  padding: 0px;
+  border-bottom: none;
+}
+a {
+  color: #b83000;
+}
+h1 a {
+  color: black;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1, h2, h3, h4 {
+  margin: 0;
+  font-weight: normal;
+}
+ul, li {
+  list-style-type: none;
+}
+code { .code; }
+code {
+  .string, .regexp { color: @dark }
+  .keyword { font-weight: bold }
+  .comment { color: rgba(0, 0, 0, 0.5) }
+  .number { color: @blue }
+  .class, .special { color: rgba(0, 50, 100, 0.8) }
+}
+pre {
+  padding: 0 30px;
+  .wrap;
+}
+blockquote {
+  font-style: italic;
+}
+body > footer {
+  text-align: left;
+  margin-left: 10px;
+  font-style: italic;
+  font-size: 18px;
+  color: #888;
+}
+.light-border {
+  @bg: lighten(@light-blue, 5%);
+  border-top: 2px solid lighten(@bg, 5%);
+  color: @blue;
+  background-color: @light-blue;
+  .box-shadow(0, -2px, 5px, 0.2);
 }
 
-#footer {
-    height: 35px;
-    width: 100%;
-    position: fixed;
-    bottom: 0px;
-    background: @footer-bg;
-    .transition;
-    cursor: pointer;
-}
-#footer:hover {
-    height: 40px;
-    background: @footer-bg-highlight;
+#logo {
+    color: @medium;
 }
