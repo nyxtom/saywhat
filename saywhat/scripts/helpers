@@ -1,4 +1,5 @@
 #!/bin/sh
+# -*- coding: utf-8 -*-
 
 red="\033[1;31m"
 green="\033[1;32m"
@@ -22,11 +23,8 @@ unset -f clearpyc
 unset -f shelter
 unset -f simplekill
 
-PSQL_BIN=`which psql`
-
-clearpyc () {
-    find . -iname '*.pyc' -delete
-}
+alias clearpyc='find . -name "*.pyc" -exec rm "{}" ";"'
+alias rmo="find . -name *.orig -exec rm '{}' ';'"
 
 silent () {
     ($@ 2>&1 > /dev/null) 2>&1 > /dev/null
@@ -44,6 +42,7 @@ askthor () {
     # Simply prints out the list of available commands used with the project
     echo
     print_cmd clearpyc "Finds and deletes and *.pyc files in the project"
+    print_cmd rmo "Finds and removes all .orig files."
     print_cmd syncdb "Uses django syncdb to a specific db, drop, create and sync with migration fake steps"
     print_cmd profileit "Runs the django test runner with the -cProfile python extension"
     print_cmd default_tests "Finds all tests under your apps/ directory"
