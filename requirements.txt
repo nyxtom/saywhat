@@ -1,12 +1,8 @@
 nose
 sure
 mock
-lettuce
 unclebob
 redis
-south
-celery
-django-celery
 Django
 supervisor
 django-debug-toolbar

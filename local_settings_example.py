@@ -5,13 +5,8 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DEBUG_TOOLBAR = DEBUG
 
-EXTRA_INSTALLED_APPS = ('lettuce.django',)
+EXTRA_INSTALLED_APPS = ()
 EXTRA_MIDDLEWARE_CLASSES = ()
-
-# Lettuce specific settings
-LETTUCE_SERVER_PORT = 8000
-SELENIUM_DRIVER='webdriver.chrome'
-LETTUCE_APPS = ()
 
 DATABASES = {
     'default': {
@@ -56,6 +51,3 @@ if DEBUG:
     )
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-# REDIS Server
-REDIS_HOST = 'localhost'

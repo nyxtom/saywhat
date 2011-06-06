@@ -60,33 +60,13 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'utils',
-    'djcelery',
-    'south',
     'live',
     'main',
 )
 
-# Celery/Redis configuration settings
-BROKER_BACKEND = "redis"
-BROKER_HOST = "localhost"
-BROKER_PORT = 6379
-BROKER_VHOST = "0"
-BROKER_USER = "guest"
-BROKER_PASSWORD = "guest"
-
 REDIS_HOST = "localhost"
 REDIS_PORT = 6379
 REDIS_DB = 0
-CELERY_SEND_EVENTS = True
-CELERY_RESULT_BACKEND = "redis"
-
-CELERY_DISABLE_RATE_LIMITS = True
-CELERY_IGNORE_RESULT = True
-CELERY_ACKS_LATE = True
-CELERYD_ETA_SCHEDULER_PRECISION = 0.1
-
-import djcelery
-djcelery.setup_loader()
 
 # Session backend to redis
 SESSION_ENGINE = 'utils.sessions.backends.redis_backend'
