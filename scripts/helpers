@@ -23,6 +23,7 @@ unset -f clearpyc
 unset -f shelter
 unset -f simplekill
 
+HERE=`pwd`
 alias clearpyc='find . -name "*.pyc" -exec rm "{}" ";"'
 alias rmo="find . -name *.orig -exec rm '{}' ';'"
 
@@ -52,6 +53,7 @@ askthor () {
     print_cmd start_supervisor "Starts the supervisord in your scripts folder"
     print_cmd runthor "Uses the django runserver command after starting up the supervisor service"
     print_cmd checkports "Checks to see if all the ports are available for running the site"
+    print_cmd prepare_nginx "Copies over the tmp nginx.cfg and writes the current project to map ^/static/"
     echo
 }
 print_cmd() {
@@ -126,8 +128,13 @@ start_supervisor () {
     echo "OK"
 }
 
+prepare_nginx (){
+    sed "s,[#]varwww[#],$HERE,g" scripts/configs/nginx.cfg.example > scripts/configs/nginx.cfg
+}
+
 runthor () {
     clearpyc
+    prepare_nginx
     start_supervisor;
     silent ./socketioserver.py & 
     ./manage.py runserver 7000 $@ --settings=settings

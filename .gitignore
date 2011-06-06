@@ -36,3 +36,4 @@ logs
 
 # Celery scheduling
 *celerybeat-schedule
+scripts/configs/nginx.cfg

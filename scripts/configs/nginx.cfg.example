@@ -48,7 +48,7 @@ http {
 
         # public media
         location ~ ^/static/ {
-            root /var/www/thor/;
+            root #varwww#/;
             access_log off;
             expires 31d;
         }
