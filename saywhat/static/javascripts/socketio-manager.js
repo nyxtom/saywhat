@@ -1,5 +1,4 @@
 var LiveManager = {
-    DEBUG: false,
     topics: {},
 
     addListener: function(topic, handler) {
@@ -14,7 +13,7 @@ var LiveManager = {
     connect: function(host, port) {
         /// Connects to the socketio server for the given host/port
         this.server = new io.Socket(host, {'port': port});
-        this.server.apply_events();
+        this.apply_events();
         this.server.connect();
     },
 
@@ -30,7 +29,7 @@ var LiveManager = {
         if (obj.message.type == 'message') {
             var data = this._parse_message(obj.message.data);
             if (data) {
-                this._log('Message on ', obj.message.channel, ': ', data);
+                _log('Message on ', obj.message.channel, ': ', data);
                 var handlers = $this.topics[obj.message.channel];
                 if (handlers) {
                     $.each(handlers, function(i, cb) { cb(data.data) });
@@ -41,7 +40,7 @@ var LiveManager = {
 
     on_connect: function() {
         /// Occurs when the socket.io connection is ready 100%
-        this._log('Connected to Socket.io');
+        _log('Connected to Socket.io');
         if (!$(".connection_status").hasClass("online")) {
             $(".connection_status").addClass("online");
         }
@@ -75,7 +74,7 @@ var LiveManager = {
         var status = $(".connection_status");
         if (status.length > 0 && typeof status.countdown != "undefined") {
             status.countdown("destroy");
-            status.countdown({ until: until, onTick, update_status});
+            status.countdown({ until: until, onTick: update_status});
         }
     },
 
@@ -99,34 +98,35 @@ var LiveManager = {
         $(".connection_status").html(current_status);
     },
 
-    _log: function() {
-        /// Describes a function that will leverage the window console to 
-        /// print out the given message arguments.
-        if (this.DEBUG && window.console && console.log) {
-            console.log.apply(console, arguments);
-        }
-    },
-
-    _err: function() {
-        /// Describes a function that will leverage the window console to 
-        /// print out the given error message arguments.
-        if (this.DEBUG && window.console) {
-            if (console.error) {
-                console.error.apply(console, arguments);
-            } else if (console.log) {
-                console.log.apply(console, arguments);
-            }
-        }
-    },
-
     _parse_message: function(message) {
         /// Parses a message using the JSON lib
         var data = null;
         try {
             data = jQuery.parseJSON(message);
         } catch(e) {
-            this._err('Error parsing message: ', e, '\n\n', message);
+            _err('Error parsing message: ', e, '\n\n', message);
         }
         return data;
     }
 };
+
+_log: function() {
+    /// Describes a function that will leverage the window console to 
+    /// print out the given message arguments.
+    if (DEBUG && window.console && console.log) {
+        console.log.apply(console, arguments);
+    }
+},
+
+_err: function() {
+    /// Describes a function that will leverage the window console to 
+    /// print out the given error message arguments.
+    if (DEBUG && window.console) {
+        if (console.error) {
+            console.error.apply(console, arguments);
+        } else if (console.log) {
+            console.log.apply(console, arguments);
+        }
+    }
+},
+
